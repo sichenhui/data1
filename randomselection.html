@@ -1,0 +1,3204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌸 课堂互动 · 随机抽选</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== 全局 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', 'PingFang SC', cursive;
+            background: linear-gradient(145deg, #e0f2f1 0%, #e8f5e9 30%, #f3e5f5 60%, #fce4ec 100%);
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+        /* ===== 背景装饰 ===== */
+        .bg-deco {
+            position: fixed;
+            pointer-events: none;
+            user-select: none;
+            z-index: 0;
+            opacity: 0.28;
+            font-size: 4rem;
+            animation: floatBg 28s infinite alternate ease-in-out;
+        }
+        .bg-deco:nth-child(1) {
+            top: 6%;
+            left: 4%;
+            font-size: 5rem;
+            animation-duration: 24s;
+            opacity: 0.18;
+        }
+        .bg-deco:nth-child(2) {
+            bottom: 8%;
+            right: 3%;
+            font-size: 6rem;
+            animation-duration: 30s;
+            animation-delay: 3s;
+            opacity: 0.16;
+        }
+        .bg-deco:nth-child(3) {
+            top: 40%;
+            right: 6%;
+            font-size: 3.6rem;
+            animation-duration: 26s;
+            animation-delay: 5s;
+            opacity: 0.20;
+        }
+        .bg-deco:nth-child(4) {
+            top: 20%;
+            left: 45%;
+            font-size: 4.4rem;
+            animation-duration: 32s;
+            animation-delay: 2s;
+            opacity: 0.14;
+        }
+        .bg-deco:nth-child(5) {
+            bottom: 30%;
+            left: 2%;
+            font-size: 3.8rem;
+            animation-duration: 22s;
+            animation-delay: 7s;
+            opacity: 0.18;
+        }
+        @keyframes floatBg {
+            0% {
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            33% {
+                transform: translate(30px, -40px) rotate(8deg) scale(1.06);
+            }
+            66% {
+                transform: translate(-20px, 30px) rotate(-6deg) scale(0.94);
+            }
+            100% {
+                transform: translate(25px, -20px) rotate(4deg) scale(1.02);
+            }
+        }
+
+        /* ===== 主容器 ===== */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1320px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.68);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border-radius: 56px;
+            padding: 30px 34px 34px;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06), 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255,
+                    0.7);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.4s ease;
+        }
+
+        /* ===== 标题栏 ===== */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid rgba(128, 203, 196, 0.20);
+            position: relative;
+        }
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, #4db6ac, #81c784, #ce93d8);
+            border-radius: 4px;
+        }
+        .app-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .app-header .brand .icon {
+            font-size: 2.8rem;
+            filter: drop-shadow(0 4px 12px rgba(77, 182, 172, 0.20));
+            animation: wobble 6s ease-in-out infinite;
+        }
+        @keyframes wobble {
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(6deg);
+            }
+            75% {
+                transform: rotate(-6deg);
+            }
+        }
+        .app-header .brand h1 {
+            font-size: 2.2rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #00796b, #4db6ac, #7e57c2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+        }
+        .app-header .mode-tag {
+            font-size: 1.0rem;
+            color: #546e7a;
+            background: rgba(128, 203, 196, 0.18);
+            padding: 6px 22px;
+            border-radius: 40px;
+            letter-spacing: 1px;
+            border: 1px solid rgba(128, 203, 196, 0.20);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+        .app-header .mode-tag .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4db6ac;
+            display: inline-block;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        /* ===== 主体：左右两栏 ===== */
+        .main-panel {
+            display: flex;
+            gap: 28px;
+            margin-bottom: 20px;
+            min-height: 460px;
+        }
+
+        /* ===== 左栏：设置 ===== */
+        .panel-left {
+            flex: 0 0 36%;
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 36px;
+            padding: 22px 24px 26px;
+            border: 1.5px solid rgba(128, 203, 196, 0.14);
+            box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 260px;
+            transition: border-color 0.3s ease;
+        }
+        .panel-left:hover {
+            border-color: rgba(128, 203, 196, 0.25);
+        }
+        .panel-left .section-title {
+            font-size: 1.1rem;
+            color: #37474f;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2px;
+        }
+        .panel-left .section-title .badge {
+            font-size: 0.7rem;
+            background: rgba(128, 203, 196, 0.20);
+            color: #00695c;
+            padding: 0 14px;
+            border-radius: 20px;
+            line-height: 2.0;
+            font-weight: 400;
+        }
+
+        .panel-left label {
+            font-size: 0.92rem;
+            color: #455a64;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .panel-left label .label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .panel-left label .label-row .hint {
+            font-size: 0.7rem;
+            color: #90a4ae;
+            font-weight: 400;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 0 10px;
+            border-radius: 12px;
+        }
+
+        .panel-left textarea {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 0.95rem;
+            padding: 10px 14px;
+            border-radius: 18px;
+            border: 1.5px solid rgba(128, 203, 196, 0.22);
+            background: rgba(255, 255, 255, 0.6);
+            resize: vertical;
+            min-height: 68px;
+            max-height: 150px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            color: #263238;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+        }
+        .panel-left textarea:focus {
+            outline: none;
+            border-color: #4db6ac;
+            box-shadow: 0 0 0 5px rgba(77, 182, 172, 0.10);
+        }
+        .panel-left textarea::placeholder {
+            color: #b0bec5;
+        }
+
+        /* 开关组通用 */
+        .switch-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.30);
+            padding: 6px 18px 6px 20px;
+            border-radius: 32px;
+            border: 1px solid rgba(128, 203, 196, 0.10);
+        }
+        .switch-group .switch-label {
+            font-size: 0.95rem;
+            color: #455a64;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .switch-group .switch-label .icon {
+            font-size: 1.2rem;
+        }
+        .switch-group .switch-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .switch-group .switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .switch-group .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch-group .switch .slider {
+            position: absolute;
+            inset: 0;
+            background: #cfd8dc;
+            border-radius: 26px;
+            transition: background 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        .switch-group .switch .slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+        }
+        .switch-group .switch input:checked+.slider {
+            background: linear-gradient(135deg, #4db6ac, #26a69a);
+        }
+        .switch-group .switch input:checked+.slider::before {
+            transform: translateX(22px);
+        }
+        .switch-group .switch-status {
+            font-size: 0.85rem;
+            color: #78909c;
+            min-width: 28px;
+        }
+
+        /* 重置池子按钮 */
+        .reset-pool-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+        }
+        .btn-reset-pool {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 1.0rem;
+            padding: 6px 20px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ff8a65, #f4511e);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(244, 81, 30, 0.20);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        .btn-reset-pool:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(244, 81, 30, 0.30);
+        }
+        .btn-reset-pool:active {
+            transform: scale(0.96);
+        }
+        .reset-hint {
+            font-size: 0.7rem;
+            color: #90a4ae;
+        }
+
+        /* 人数选择 */
+        .count-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.30);
+            padding: 6px 18px 6px 20px;
+            border-radius: 32px;
+            border: 1px solid rgba(128, 203, 196, 0.10);
+        }
+        .count-group .count-label {
+            font-size: 0.95rem;
+            color: #455a64;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .count-group .count-label .icon {
+            font-size: 1.2rem;
+        }
+        .count-group .count-input {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 1.0rem;
+            padding: 2px 6px;
+            border-radius: 16px;
+            border: 1.5px solid rgba(128, 203, 196, 0.20);
+            background: rgba(255, 255, 255, 0.6);
+            color: #263238;
+            width: 56px;
+            text-align: center;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .count-group .count-input:focus {
+            border-color: #4db6ac;
+            box-shadow: 0 0 0 4px rgba(77, 182, 172, 0.08);
+        }
+        .count-group .count-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .count-group .count-hint {
+            font-size: 0.7rem;
+            color: #90a4ae;
+            margin-left: 2px;
+        }
+
+        /* 速度 */
+        .speed-group {
+            margin: 0;
+        }
+        .speed-group .speed-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .speed-group .speed-row .speed-label {
+            font-size: 1.0rem;
+            color: #455a64;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .speed-group .speed-row .speed-label .icon {
+            font-size: 1.2rem;
+        }
+        .speed-group input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            min-width: 100px;
+            height: 8px;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #b2dfdb, #4db6ac, #26a69a);
+            outline: none;
+            transition: opacity 0.2s;
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+        .speed-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #80cbc4, #26a69a);
+            cursor: pointer;
+            box-shadow: 0 2px 14px rgba(38, 166, 154, 0.35), 0 0 0 4px rgba(77, 182, 172, 0.10);
+            border: 2px solid #fff;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .speed-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.14);
+            box-shadow: 0 4px 20px rgba(38, 166, 154, 0.45), 0 0 0 6px rgba(77, 182, 172, 0.14);
+        }
+        .speed-group input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #80cbc4, #26a69a);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 14px rgba(38, 166, 154, 0.35);
+        }
+        .speed-group .speed-value {
+            font-size: 1.1rem;
+            color: #00695c;
+            min-width: 2.6rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 0 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(128, 203, 196, 0.18);
+        }
+        .speed-group .speed-hint {
+            font-size: 0.72rem;
+            color: #90a4ae;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+            min-height: 1.4rem;
+            transition: color 0.3s;
+            padding-left: 2px;
+        }
+        .speed-group .speed-hint.active {
+            color: #00897b;
+        }
+
+        /* 倒计时 */
+        .timer-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.35);
+            padding: 8px 18px 8px 20px;
+            border-radius: 32px;
+            border: 1px solid rgba(128, 203, 196, 0.10);
+            backdrop-filter: blur(4px);
+        }
+        .timer-group .timer-label {
+            font-size: 0.95rem;
+            color: #455a64;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .timer-group .timer-label .icon {
+            font-size: 1.2rem;
+        }
+
+        .switch-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .switch .slider {
+            position: absolute;
+            inset: 0;
+            background: #cfd8dc;
+            border-radius: 26px;
+            transition: background 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        .switch .slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+        }
+        .switch input:checked+.slider {
+            background: linear-gradient(135deg, #4db6ac, #26a69a);
+        }
+        .switch input:checked+.slider::before {
+            transform: translateX(22px);
+        }
+
+        .timer-group .sec-select {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 1.0rem;
+            padding: 2px 6px;
+            border-radius: 16px;
+            border: 1.5px solid rgba(128, 203, 196, 0.20);
+            background: rgba(255, 255, 255, 0.6);
+            color: #263238;
+            width: 60px;
+            text-align: center;
+            outline: none;
+            transition: border 0.3s;
+        }
+        .timer-group .sec-select:focus {
+            border-color: #4db6ac;
+            box-shadow: 0 0 0 4px rgba(77, 182, 172, 0.08);
+        }
+        .timer-group .sec-select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .timer-group .sec-label {
+            font-size: 0.9rem;
+            color: #78909c;
+        }
+
+        /* 开始按钮 + 音效按钮 + 音量 */
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+        .action-row .btn-start {
+            flex: 1;
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 1.8rem;
+            padding: 14px 0;
+            border: none;
+            border-radius: 44px;
+            background: linear-gradient(135deg, #4db6ac, #26a69a);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 32px rgba(38, 166, 154, 0.28);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .action-row .btn-start::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.12), transparent 70%);
+            pointer-events: none;
+        }
+        .action-row .btn-start:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 14px 44px rgba(38, 166, 154, 0.35);
+        }
+        .action-row .btn-start:active:not(:disabled) {
+            transform: scale(0.97);
+            box-shadow: 0 6px 20px rgba(38, 166, 154, 0.25);
+        }
+        .action-row .btn-start:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .action-row .btn-start .icon {
+            font-size: 2.0rem;
+            transition: transform 0.3s ease;
+        }
+        .action-row .btn-start:hover:not(:disabled) .icon {
+            transform: rotate(8deg) scale(1.06);
+        }
+        .action-row .btn-start.is-stopping {
+            background: linear-gradient(135deg, #ff8a65, #f4511e);
+            box-shadow: 0 8px 32px rgba(244, 81, 30, 0.28);
+            animation: pulseStop 1.4s ease-in-out infinite alternate;
+        }
+        @keyframes pulseStop {
+            0% {
+                box-shadow: 0 8px 32px rgba(244, 81, 30, 0.22);
+            }
+            100% {
+                box-shadow: 0 14px 52px rgba(244, 81, 30, 0.38);
+            }
+        }
+        .action-row .btn-start .countdown-badge {
+            font-size: 1.4rem;
+            background: rgba(255, 255, 255, 0.18);
+            padding: 0 18px;
+            border-radius: 30px;
+            line-height: 2.0;
+            min-width: 3.4rem;
+            text-align: center;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 音效按钮 + 音量 */
+        .sound-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.30);
+            padding: 4px 12px 4px 8px;
+            border-radius: 40px;
+            border: 1px solid rgba(128, 203, 196, 0.10);
+            flex-shrink: 0;
+        }
+        .sound-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.50);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid rgba(128, 203, 196, 0.15);
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #455a64;
+            flex-shrink: 0;
+        }
+        .sound-btn:hover {
+            transform: scale(1.08);
+            border-color: #4db6ac;
+            box-shadow: 0 8px 24px rgba(77, 182, 172, 0.15);
+        }
+        .sound-btn:active {
+            transform: scale(0.92);
+        }
+        .sound-btn.muted {
+            color: #b0bec5;
+            background: rgba(255, 255, 255, 0.30);
+            border-color: rgba(128, 203, 196, 0.08);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #b2dfdb, #26a69a);
+            border-radius: 4px;
+            outline: none;
+            transition: opacity 0.2s;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #80cbc4, #26a69a);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(38, 166, 154, 0.30);
+        }
+        .volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #80cbc4, #26a69a);
+            cursor: pointer;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(38, 166, 154, 0.30);
+        }
+        .volume-value {
+            font-size: 0.8rem;
+            color: #78909c;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        /* ===== 右栏：展示 ===== */
+        .panel-right {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.48);
+            border-radius: 36px;
+            padding: 20px 26px 24px;
+            border: 1.5px solid rgba(128, 203, 196, 0.10);
+            display: flex;
+            flex-direction: column;
+            min-width: 240px;
+            position: relative;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+            box-shadow: inset 0 2px 20px rgba(0, 0, 0, 0.02), 0 4px 16px rgba(0, 0, 0, 0.02);
+        }
+        .panel-right .right-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .panel-right .right-header .title {
+            font-size: 1.0rem;
+            color: #455a64;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-right .right-header .title .deco {
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+        .panel-right .right-header .status {
+            font-size: 0.85rem;
+            color: #78909c;
+            background: rgba(128, 203, 196, 0.10);
+            padding: 2px 18px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: 1px solid rgba(128, 203, 196, 0.06);
+        }
+        .panel-right .right-header .status.active {
+            color: #00897b;
+            background: rgba(77, 182, 172, 0.14);
+            border-color: rgba(77, 182, 172, 0.10);
+        }
+        .panel-right .right-header .status.done {
+            color: #e65100;
+            background: rgba(255, 152, 0, 0.12);
+            border-color: rgba(255, 152, 0, 0.10);
+        }
+        .panel-right .right-header .status.warning {
+            color: #c62828;
+            background: rgba(198, 40, 40, 0.10);
+            border-color: rgba(198, 40, 40, 0.15);
+        }
+
+        /* 展示区 */
+        .display-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 270px;
+            padding: 12px 8px;
+            gap: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .display-area .empty-hint {
+            font-size: 1.2rem;
+            color: #b0bec5;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        /* 标准模式：名字 + 内容 */
+        .display-area .name-box {
+            font-size: 5.6rem;
+            color: #1a237e;
+            letter-spacing: 6px;
+            line-height: 1.2;
+            text-align: center;
+            word-break: break-word;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 6.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            width: 100%;
+        }
+        .display-area .name-box.placeholder {
+            color: #b0bec5;
+            font-size: 2.8rem;
+            letter-spacing: 4px;
+        }
+        .display-area .name-box.selected {
+            font-size: 7.6rem;
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 80px rgba(255, 152, 0, 0.18);
+            animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .display-area .name-box.long-name {
+            font-size: 4.4rem;
+        }
+        .display-area .name-box.long-name.selected {
+            font-size: 5.8rem;
+        }
+
+        .display-area .content-box {
+            font-size: 2.4rem;
+            color: #37474f;
+            letter-spacing: 2px;
+            text-align: center;
+            word-break: break-word;
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            min-height: 3.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            opacity: 0.75;
+            width: 100%;
+        }
+        .display-area .content-box.placeholder {
+            color: #b0bec5;
+            font-size: 1.6rem;
+        }
+        .display-area .content-box.selected {
+            font-size: 3.4rem;
+            color: #0d47a1;
+            opacity: 1;
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: popBig 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.06s both;
+        }
+        .display-area .content-box.long-content {
+            font-size: 1.8rem;
+        }
+        .display-area .content-box.long-content.selected {
+            font-size: 2.6rem;
+        }
+
+        /* 网格模式（多人） */
+        .display-area.grid-mode .name-box {
+            display: none;
+        }
+        .display-area.grid-mode .content-box {
+            display: none;
+        }
+        .grid-container {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 620px;
+            padding: 8px 0;
+        }
+        .display-area.grid-mode .grid-container {
+            display: grid;
+        }
+        .grid-container .g-card {
+            background: rgba(255, 255, 255, 0.60);
+            border-radius: 28px;
+            padding: 18px 6px 16px;
+            text-align: center;
+            border: 2px solid rgba(128, 203, 196, 0.16);
+            transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.02);
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .grid-container .g-card .g-index {
+            font-size: 0.7rem;
+            color: #90a4ae;
+            margin-bottom: 2px;
+            letter-spacing: 1px;
+        }
+        .grid-container .g-card .g-name {
+            font-size: 2.6rem;
+            color: #1a237e;
+            letter-spacing: 3px;
+            word-break: break-word;
+            line-height: 1.3;
+            transition: all 0.35s ease;
+        }
+        .grid-container .g-card .g-name.long {
+            font-size: 2.0rem;
+        }
+        .grid-container .g-card.rolling {
+            border-color: rgba(77, 182, 172, 0.35);
+            background: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 0 40px rgba(77, 182, 172, 0.06);
+        }
+        .grid-container .g-card.revealed {
+            border-color: #ff8f00;
+            background: rgba(255, 215, 0, 0.10);
+            box-shadow: 0 4px 32px rgba(255, 152, 0, 0.10);
+            transform: scale(1.04);
+        }
+        .grid-container .g-card.revealed .g-name {
+            color: #e65100;
+            font-size: 3.0rem;
+        }
+        .grid-container .g-card.revealed .g-name.long {
+            font-size: 2.4rem;
+        }
+
+        @keyframes popBig {
+            0% {
+                transform: scale(0.4);
+                opacity: 0.1;
+            }
+            50% {
+                transform: scale(1.16);
+            }
+            75% {
+                transform: scale(0.96);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* ===== 底部：常用内容 + 模板区 ===== */
+        .template-section {
+            border-top: 2px solid rgba(128, 203, 196, 0.14);
+            padding-top: 18px;
+            margin-top: 6px;
+        }
+
+        /* ---- 常用内容（历史记录） ---- */
+        .history-section {
+            margin-bottom: 18px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 28px;
+            padding: 16px 20px 18px;
+            border: 1.5px solid rgba(128, 203, 196, 0.10);
+            backdrop-filter: blur(4px);
+        }
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .history-header .history-title {
+            font-size: 1.0rem;
+            color: #37474f;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .history-header .history-title .icon {
+            font-size: 1.3rem;
+        }
+        .history-header .history-title .badge {
+            font-size: 0.65rem;
+            background: rgba(128, 203, 196, 0.18);
+            color: #00695c;
+            padding: 0 12px;
+            border-radius: 20px;
+            line-height: 1.8;
+        }
+        .btn-save-history {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 0.95rem;
+            padding: 6px 20px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #7e57c2, #5c6bc0);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(94, 53, 177, 0.20);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-save-history:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(94, 53, 177, 0.30);
+        }
+        .btn-save-history:active {
+            transform: scale(0.96);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .history-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 4px;
+        }
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(128, 203, 196, 0.30);
+            border-radius: 4px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.50);
+            border-radius: 18px;
+            padding: 8px 16px 8px 18px;
+            border: 1px solid rgba(128, 203, 196, 0.10);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .history-item:hover {
+            border-color: rgba(77, 182, 172, 0.30);
+            background: rgba(255, 255, 255, 0.70);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+        .history-item .h-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 120px;
+        }
+        .history-item .h-info .h-name {
+            font-size: 0.95rem;
+            color: #263238;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        .history-item .h-info .h-meta {
+            font-size: 0.7rem;
+            color: #90a4ae;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .history-item .h-info .h-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .history-item .h-actions {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .history-item .h-actions button {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: rgba(128, 203, 196, 0.12);
+            color: #455a64;
+        }
+        .history-item .h-actions .btn-load {
+            background: rgba(77, 182, 172, 0.18);
+            color: #00695c;
+        }
+        .history-item .h-actions .btn-load:hover {
+            background: rgba(77, 182, 172, 0.35);
+            transform: scale(1.04);
+        }
+        .history-item .h-actions .btn-del {
+            background: rgba(244, 67, 54, 0.08);
+            color: #c62828;
+        }
+        .history-item .h-actions .btn-del:hover {
+            background: rgba(244, 67, 54, 0.20);
+            transform: scale(1.04);
+        }
+        .history-empty {
+            font-size: 0.85rem;
+            color: #b0bec5;
+            text-align: center;
+            padding: 12px 0;
+            letter-spacing: 1px;
+        }
+
+        /* ---- 快捷模板 ---- */
+        .template-title {
+            font-size: 0.95rem;
+            color: #78909c;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .template-title .icon {
+            font-size: 1.3rem;
+        }
+        .template-title .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(128, 203, 196, 0.20), transparent);
+        }
+
+        .template-grid {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .template-grid .t-card {
+            flex: 1 0 100px;
+            max-width: 160px;
+            background: rgba(255, 255, 255, 0.50);
+            border-radius: 24px;
+            padding: 14px 12px 16px;
+            border: 1.5px solid rgba(128, 203, 196, 0.10);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        .template-grid .t-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(77, 182, 172, 0.04), rgba(206, 147, 216, 0.04));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .template-grid .t-card:hover {
+            transform: translateY(-6px) scale(1.01);
+            border-color: #4db6ac;
+            box-shadow: 0 12px 40px rgba(77, 182, 172, 0.12);
+            background: rgba(255, 255, 255, 0.75);
+        }
+        .template-grid .t-card:hover::before {
+            opacity: 1;
+        }
+        .template-grid .t-card:active {
+            transform: scale(0.96);
+        }
+        .template-grid .t-card .t-icon {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 2px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        .template-grid .t-card:hover .t-icon {
+            transform: scale(1.10) rotate(4deg);
+        }
+        .template-grid .t-card .t-name {
+            font-size: 1.0rem;
+            color: #37474f;
+            letter-spacing: 0.5px;
+            position: relative;
+            z-index: 1;
+        }
+        .template-grid .t-card .t-desc {
+            font-size: 0.65rem;
+            color: #90a4ae;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+            position: relative;
+            z-index: 1;
+        }
+        .template-grid .t-card.active {
+            border-color: #4db6ac;
+            background: rgba(77, 182, 172, 0.08);
+            box-shadow: 0 0 0 4px rgba(77, 182, 172, 0.08), 0 8px 28px rgba(77, 182, 172, 0.08);
+        }
+        .template-grid .t-card.custom-active {
+            border-color: #7e57c2;
+            background: rgba(126, 87, 194, 0.06);
+            box-shadow: 0 0 0 4px rgba(126, 87, 194, 0.06), 0 8px 28px rgba(126, 87, 194, 0.06);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 920px) {
+            .main-panel {
+                flex-direction: column;
+            }
+            .panel-left {
+                flex: none;
+                width: 100%;
+                min-width: 0;
+            }
+            .panel-right {
+                min-height: 300px;
+            }
+            .display-area .name-box {
+                font-size: 4.4rem;
+                min-height: 5rem;
+            }
+            .display-area .name-box.selected {
+                font-size: 5.6rem;
+            }
+            .display-area .name-box.long-name {
+                font-size: 3.6rem;
+            }
+            .display-area .name-box.long-name.selected {
+                font-size: 4.6rem;
+            }
+            .display-area .content-box {
+                font-size: 2.0rem;
+                min-height: 3.2rem;
+            }
+            .display-area .content-box.selected {
+                font-size: 2.8rem;
+            }
+            .grid-container {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 12px;
+            }
+            .grid-container .g-card .g-name {
+                font-size: 2.2rem;
+            }
+            .grid-container .g-card.revealed .g-name {
+                font-size: 2.6rem;
+            }
+            .app-header .brand h1 {
+                font-size: 1.7rem;
+            }
+            .app {
+                padding: 22px 20px 26px;
+                border-radius: 40px;
+            }
+            .template-grid .t-card {
+                flex: 1 0 80px;
+                max-width: 130px;
+                padding: 12px 8px 14px;
+            }
+            .action-row .btn-start {
+                font-size: 1.6rem;
+                padding: 12px 0;
+            }
+            .sound-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.4rem;
+            }
+            .volume-slider {
+                width: 60px;
+            }
+            .btn-reset-pool {
+                font-size: 0.9rem;
+                padding: 4px 16px;
+            }
+            .history-item .h-info .h-meta {
+                gap: 6px;
+            }
+            .history-item .h-actions button {
+                font-size: 0.7rem;
+                padding: 3px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app {
+                padding: 14px 12px 18px;
+                border-radius: 28px;
+            }
+            .app-header .brand h1 {
+                font-size: 1.3rem;
+            }
+            .app-header .brand .icon {
+                font-size: 2.0rem;
+            }
+            .app-header .mode-tag {
+                font-size: 0.75rem;
+                padding: 4px 14px;
+            }
+            .panel-left {
+                padding: 14px 14px 18px;
+                border-radius: 24px;
+            }
+            .panel-right {
+                padding: 14px 14px 18px;
+                border-radius: 24px;
+                min-height: 200px;
+            }
+            .display-area .name-box {
+                font-size: 3.2rem;
+                min-height: 3.8rem;
+                letter-spacing: 3px;
+            }
+            .display-area .name-box.selected {
+                font-size: 4.4rem;
+            }
+            .display-area .name-box.long-name {
+                font-size: 2.6rem;
+            }
+            .display-area .name-box.long-name.selected {
+                font-size: 3.6rem;
+            }
+            .display-area .content-box {
+                font-size: 1.6rem;
+                min-height: 2.8rem;
+            }
+            .display-area .content-box.selected {
+                font-size: 2.2rem;
+            }
+            .display-area .content-box.long-content {
+                font-size: 1.3rem;
+            }
+            .display-area .content-box.long-content.selected {
+                font-size: 1.8rem;
+            }
+            .grid-container {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 8px;
+            }
+            .grid-container .g-card {
+                min-height: 72px;
+                padding: 10px 4px 10px;
+                border-radius: 18px;
+            }
+            .grid-container .g-card .g-name {
+                font-size: 1.6rem;
+            }
+            .grid-container .g-card .g-name.long {
+                font-size: 1.2rem;
+            }
+            .grid-container .g-card.revealed .g-name {
+                font-size: 2.0rem;
+            }
+            .grid-container .g-card.revealed .g-name.long {
+                font-size: 1.6rem;
+            }
+            .count-group,
+            .switch-group,
+            .timer-group {
+                padding: 6px 12px;
+                gap: 8px;
+                border-radius: 24px;
+            }
+            .count-group .count-label,
+            .switch-group .switch-label,
+            .timer-group .timer-label {
+                font-size: 0.8rem;
+            }
+            .count-group .count-input {
+                width: 44px;
+                font-size: 0.85rem;
+            }
+            .switch {
+                width: 40px;
+                height: 22px;
+            }
+            .switch .slider::before {
+                width: 16px;
+                height: 16px;
+                left: 3px;
+                bottom: 3px;
+            }
+            .switch input:checked+.slider::before {
+                transform: translateX(18px);
+            }
+            .timer-group .sec-select {
+                width: 44px;
+                font-size: 0.85rem;
+            }
+            .action-row .btn-start {
+                font-size: 1.3rem;
+                padding: 10px 0;
+                letter-spacing: 2px;
+                border-radius: 32px;
+            }
+            .action-row .btn-start .icon {
+                font-size: 1.5rem;
+            }
+            .action-row .btn-start .countdown-badge {
+                font-size: 1.0rem;
+                padding: 0 12px;
+                min-width: 2.6rem;
+            }
+            .sound-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            .volume-slider {
+                width: 50px;
+            }
+            .volume-value {
+                font-size: 0.7rem;
+                min-width: 28px;
+            }
+            .reset-pool-row .btn-reset-pool {
+                font-size: 0.8rem;
+                padding: 4px 12px;
+            }
+            .reset-hint {
+                font-size: 0.6rem;
+            }
+            .template-grid .t-card {
+                flex: 1 0 60px;
+                max-width: 90px;
+                padding: 8px 4px 10px;
+                border-radius: 16px;
+            }
+            .template-grid .t-card .t-icon {
+                font-size: 1.6rem;
+            }
+            .template-grid .t-card .t-name {
+                font-size: 0.7rem;
+            }
+            .template-grid .t-card .t-desc {
+                font-size: 0.5rem;
+                margin-top: 2px;
+            }
+            .panel-left textarea {
+                min-height: 48px;
+                font-size: 0.82rem;
+                padding: 6px 10px;
+                border-radius: 14px;
+            }
+            .display-area {
+                min-height: 160px;
+                padding: 4px 2px;
+            }
+            .app-header::after {
+                width: 80px;
+            }
+            .bg-deco {
+                display: none;
+            }
+            .panel-left .section-title {
+                font-size: 0.95rem;
+            }
+            .panel-left .section-title .badge {
+                font-size: 0.6rem;
+                padding: 0 10px;
+            }
+            .speed-group .speed-row {
+                gap: 8px;
+            }
+            .speed-group .speed-row .speed-label {
+                font-size: 0.85rem;
+            }
+            .speed-group input[type="range"] {
+                min-width: 60px;
+            }
+            .speed-group .speed-value {
+                font-size: 0.9rem;
+                min-width: 2.0rem;
+                padding: 0 6px;
+            }
+            .history-section {
+                padding: 12px 14px 14px;
+                border-radius: 20px;
+            }
+            .history-header .history-title {
+                font-size: 0.85rem;
+            }
+            .btn-save-history {
+                font-size: 0.8rem;
+                padding: 4px 14px;
+            }
+            .history-item {
+                padding: 6px 12px 6px 14px;
+                border-radius: 14px;
+            }
+            .history-item .h-info .h-name {
+                font-size: 0.8rem;
+            }
+            .history-item .h-info .h-meta {
+                font-size: 0.6rem;
+                gap: 4px;
+            }
+            .history-item .h-actions button {
+                font-size: 0.65rem;
+                padding: 2px 8px;
+            }
+        }
+
+        /* ===== 状态 ===== */
+        .panel-right.is-rolling {
+            border-color: rgba(77, 182, 172, 0.30);
+            box-shadow: 0 0 60px rgba(77, 182, 172, 0.04), inset 0 0 60px rgba(77, 182, 172, 0.02);
+        }
+        .panel-right.is-done {
+            border-color: #ffab40;
+            box-shadow: 0 0 70px rgba(255, 152, 0, 0.06), inset 0 0 60px rgba(255, 152, 0, 0.02);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 弹窗 (简单模态) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.30);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay .modal-box {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 32px 36px 28px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay .modal-box .modal-title {
+            font-size: 1.3rem;
+            color: #263238;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-overlay .modal-box .modal-title .icon {
+            font-size: 1.6rem;
+        }
+        .modal-overlay .modal-box .modal-input {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            font-size: 1.0rem;
+            padding: 10px 16px;
+            border-radius: 20px;
+            border: 1.5px solid rgba(128, 203, 196, 0.25);
+            background: rgba(255, 255, 255, 0.6);
+            width: 100%;
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+            color: #263238;
+            margin-bottom: 16px;
+        }
+        .modal-overlay .modal-box .modal-input:focus {
+            border-color: #4db6ac;
+            box-shadow: 0 0 0 5px rgba(77, 182, 172, 0.10);
+        }
+        .modal-overlay .modal-box .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .modal-overlay .modal-box .modal-actions button {
+            font-family: 'ZCOOL KuaiLe', 'PingFang SC', cursive;
+            padding: 8px 28px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.0rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .modal-overlay .modal-box .modal-actions .btn-cancel {
+            background: rgba(0, 0, 0, 0.04);
+            color: #78909c;
+        }
+        .modal-overlay .modal-box .modal-actions .btn-cancel:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+        .modal-overlay .modal-box .modal-actions .btn-confirm {
+            background: linear-gradient(135deg, #4db6ac, #26a69a);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(38, 166, 154, 0.25);
+        }
+        .modal-overlay .modal-box .modal-actions .btn-confirm:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(38, 166, 154, 0.35);
+        }
+        .modal-overlay .modal-box .modal-actions .btn-confirm:active {
+            transform: scale(0.96);
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        @keyframes slideUp {
+            0% {
+                transform: translateY(30px) scale(0.96);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 背景装饰 ===== -->
+    <div class="bg-deco" style="top:6%;left:4%;font-size:5rem;">🌸</div>
+    <div class="bg-deco" style="bottom:8%;right:3%;font-size:6rem;">📖</div>
+    <div class="bg-deco" style="top:40%;right:6%;font-size:3.6rem;">⭐</div>
+    <div class="bg-deco" style="top:20%;left:45%;font-size:4.4rem;">🌈</div>
+    <div class="bg-deco" style="bottom:30%;left:2%;font-size:3.8rem;">🧸</div>
+
+    <!-- ===== 主容器 ===== -->
+    <div class="app" id="app">
+
+        <!-- ===== 标题栏 ===== -->
+        <header class="app-header">
+            <div class="brand">
+                <span class="icon">📚</span>
+                <h1>课堂互动 · 随机抽选</h1>
+            </div>
+            <span class="mode-tag" id="modeTag">
+                <span class="dot"></span> 标准模式
+            </span>
+        </header>
+
+        <!-- ===== 主体 ===== -->
+        <div class="main-panel">
+
+            <!-- ===== 左栏：设置 ===== -->
+            <aside class="panel-left" id="panelLeft">
+                <div class="section-title">
+                    ⚙️ 设置区
+                    <span class="badge">填写名单 · 调节参数</span>
+                </div>
+
+                <!-- 学生名单 -->
+                <label>
+                    <span class="label-row">
+                        <span>👩‍🎓 学生名单</span>
+                        <span class="hint">每行一个姓名</span>
+                    </span>
+                    <textarea id="nameList" placeholder="甲1&#10;乙2&#10;丙3&#10;……">甲1
+                        乙2
+                        丙3
+                        丁4
+                        戊5
+                    </textarea>
+                </label>
+
+                <!-- 学生重复开关 -->
+                <div class="switch-group">
+                    <span class="switch-label"><span class="icon">👤</span> 允许重复（学生）</span>
+                    <div class="switch-wrap">
+                        <label class="switch">
+                            <input type="checkbox" id="studentRepeatToggle" checked />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-status" id="studentRepeatStatus">是</span>
+                    </div>
+                    <span style="font-size:0.7rem;color:#90a4ae;margin-left:auto;">关闭后学生不重复抽取</span>
+                </div>
+
+                <!-- 内容名单 -->
+                <label>
+                    <span class="label-row">
+                        <span>📝 内容名单</span>
+                        <span class="hint">抽奖/抽背内容</span>
+                    </span>
+                    <textarea id="contentList" placeholder="《短歌行》&#10;《登高》&#10;……"></textarea>
+                </label>
+
+                <!-- 内容重复开关 -->
+                <div class="switch-group">
+                    <span class="switch-label"><span class="icon">🔄</span> 允许重复（内容）</span>
+                    <div class="switch-wrap">
+                        <label class="switch">
+                            <input type="checkbox" id="contentRepeatToggle" checked />
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-status" id="contentRepeatStatus">是</span>
+                    </div>
+                    <span style="font-size:0.7rem;color:#90a4ae;margin-left:auto;">关闭后内容不重复抽取</span>
+                </div>
+
+                <!-- 重置池子按钮 -->
+                <div class="reset-pool-row">
+                    <button class="btn-reset-pool" id="resetPoolBtn">🔄 重置池子</button>
+                    <span class="reset-hint">清空已抽记录，重新开始</span>
+                </div>
+
+                <!-- 人数选择 -->
+                <div class="count-group">
+                    <span class="count-label"><span class="icon">👥</span> 抽选人数</span>
+                    <input type="number" class="count-input" id="countInput" value="1" min="1" max="10" step="1" />
+                    <span class="count-hint">(1~10人)</span>
+                </div>
+
+                <!-- 速度 -->
+                <div class="speed-group">
+                    <div class="speed-row">
+                        <span class="speed-label"><span class="icon">🐢</span> 速度</span>
+                        <input type="range" id="speedSlider" min="1" max="10" value="5" step="1" />
+                        <span class="speed-value" id="speedValue">5</span>
+                        <span class="speed-label">快 <span class="icon">🐇</span></span>
+                    </div>
+                    <div class="speed-hint" id="speedHint">⚡ 适中速度，稳稳的 ~</div>
+                </div>
+
+                <!-- 倒计时 -->
+                <div class="timer-group">
+                    <span class="timer-label"><span class="icon">⏳</span> 倒计时</span>
+                    <div class="switch-wrap">
+                        <label class="switch">
+                            <input type="checkbox" id="timerToggle" checked />
+                            <span class="slider"></span>
+                        </label>
+                        <span style="font-size:0.8rem;color:#78909c;" id="timerStatus">开</span>
+                    </div>
+                    <input type="number" class="sec-select" id="timerSeconds" value="5" min="0" max="20" step="1" />
+                    <span class="sec-label">秒</span>
+                </div>
+
+                <!-- 开始按钮 + 音效按钮 + 音量 -->
+                <div class="action-row">
+                    <button class="btn-start" id="actionBtn">
+                        <span class="icon">🎲</span>
+                        <span id="btnText">开始抽选</span>
+                    </button>
+                    <div class="sound-group">
+                        <button class="sound-btn" id="soundToggle" title="音效开关">🔊</button>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="60" />
+                        <span class="volume-value" id="volumeValue">60</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ===== 右栏：展示 ===== -->
+            <section class="panel-right" id="panelRight">
+                <div class="right-header">
+                    <span class="title">🎯 抽选展示 <span class="deco">·</span></span>
+                    <span class="status" id="statusBadge">✨ 准备就绪</span>
+                </div>
+                <div class="display-area" id="displayArea">
+                    <!-- 标准模式：名字 + 内容 -->
+                    <div class="name-box placeholder" id="nameDisplay">🌟 等待开始</div>
+                    <div class="content-box placeholder" id="contentDisplay">📝 准备内容</div>
+
+                    <!-- 网格模式（多人） -->
+                    <div class="grid-container" id="gridContainer"></div>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- ===== 底部：常用内容 + 模板区 ===== -->
+        <section class="template-section">
+
+            <!-- ===== 常用内容（历史记录） ===== -->
+            <div class="history-section" id="historySection">
+                <div class="history-header">
+                    <span class="history-title">
+                        <span class="icon">📋</span> 常用内容
+                        <span class="badge" id="historyCount">0 条记录</span>
+                    </span>
+                    <button class="btn-save-history" id="saveHistoryBtn">💾 保存当前设置</button>
+                </div>
+                <div class="history-list" id="historyList">
+                    <div class="history-empty">暂无历史记录，保存当前设置后在此显示</div>
+                </div>
+            </div>
+
+            <!-- ===== 快捷模板 ===== -->
+            <div class="template-title">
+                <span class="icon">⚡</span> 快捷模板
+                <span class="line"></span>
+                <span style="font-size:0.7rem;color:#b0bec5;font-weight:400;flex-shrink:0;">点击一键切换 · 自行设置自由调整</span>
+            </div>
+            <div class="template-grid" id="templateGrid">
+                <div class="t-card active" data-template="custom">
+                    <span class="t-icon">🎛️</span>
+                    <div class="t-name">自行设置</div>
+                    <div class="t-desc">自由调整所有参数</div>
+                </div>
+                <div class="t-card" data-template="five">
+                    <span class="t-icon">👥</span>
+                    <div class="t-name">五人一组</div>
+                    <div class="t-desc">速度8 · 倒计时5s</div>
+                </div>
+                <div class="t-card" data-template="countdown5">
+                    <span class="t-icon">⏱️</span>
+                    <div class="t-name">随机点名</div>
+                    <div class="t-desc">速度8 · 倒计时5s</div>
+                </div>
+                <div class="t-card" data-template="recite">
+                    <span class="t-icon">📖</span>
+                    <div class="t-name">抽背模式</div>
+                    <div class="t-desc">速度8 · 倒计时5s</div>
+                </div>
+                <div class="t-card" data-template="instant">
+                    <span class="t-icon">⚡</span>
+                    <div class="t-name">即点即停</div>
+                    <div class="t-desc">速度8 · 无倒计时</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ===== 模态框（保存历史记录） ===== -->
+    <div class="modal-overlay hidden" id="saveModal">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span class="icon">💾</span> 保存为常用内容
+            </div>
+            <input type="text" class="modal-input" id="historyNameInput" placeholder="输入名称，如「语文课背诵」" maxlength="30" />
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modalCancel">取消</button>
+                <button class="btn-confirm" id="modalConfirm">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ============================================================
+            //  DOM 引用
+            // ============================================================
+            const nameList = document.getElementById('nameList');
+            const contentList = document.getElementById('contentList');
+            const studentRepeatToggle = document.getElementById('studentRepeatToggle');
+            const studentRepeatStatus = document.getElementById('studentRepeatStatus');
+            const contentRepeatToggle = document.getElementById('contentRepeatToggle');
+            const contentRepeatStatus = document.getElementById('contentRepeatStatus');
+            const resetPoolBtn = document.getElementById('resetPoolBtn');
+            const countInput = document.getElementById('countInput');
+            const speedSlider = document.getElementById('speedSlider');
+            const speedValue = document.getElementById('speedValue');
+            const speedHint = document.getElementById('speedHint');
+            const timerToggle = document.getElementById('timerToggle');
+            const timerSeconds = document.getElementById('timerSeconds');
+            const timerStatus = document.getElementById('timerStatus');
+            const actionBtn = document.getElementById('actionBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.querySelector('.btn-start .icon');
+            const soundToggle = document.getElementById('soundToggle');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+            const nameDisplay = document.getElementById('nameDisplay');
+            const contentDisplay = document.getElementById('contentDisplay');
+            const displayArea = document.getElementById('displayArea');
+            const gridContainer = document.getElementById('gridContainer');
+            const panelRight = document.getElementById('panelRight');
+            const statusBadge = document.getElementById('statusBadge');
+            const modeTag = document.getElementById('modeTag');
+            const templateCards = document.querySelectorAll('.t-card');
+
+            // 历史记录相关
+            const historyList = document.getElementById('historyList');
+            const historyCount = document.getElementById('historyCount');
+            const saveHistoryBtn = document.getElementById('saveHistoryBtn');
+            const saveModal = document.getElementById('saveModal');
+            const historyNameInput = document.getElementById('historyNameInput');
+            const modalCancel = document.getElementById('modalCancel');
+            const modalConfirm = document.getElementById('modalConfirm');
+
+            // ============================================================
+            //  状态
+            // ============================================================
+            const STATE = {
+                IDLE: 'idle',
+                ROLLING: 'rolling',
+                DONE: 'done',
+            };
+
+            let state = STATE.IDLE;
+            let timer = null;
+            let countdownTimer = null;
+            let countdownValue = 0;
+            let isGridMode = false;
+            let usedStudents = [];
+            let usedContents = [];
+            let soundEnabled = true;
+            let volume = 0.6;
+            let isTemplateLoading = false; // 防止模板加载时触发额外事件
+
+            // ============================================================
+            //  音效系统
+            // ============================================================
+            let audioCtx = null;
+
+            function initAudio() {
+                if (!audioCtx) {
+                    try {
+                        audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                    } catch (e) { console.warn('Web Audio not supported'); }
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            }
+
+            function playTick() {
+                if (!soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.frequency.value = 1200 + Math.random() * 200;
+                    osc.type = 'sine';
+                    const vol = volume * 0.15;
+                    gain.gain.setValueAtTime(vol, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                    osc.start(now);
+                    osc.stop(now + 0.04);
+                } catch (e) { /* ignore */ }
+            }
+
+            function playStopSound() {
+                if (!soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const notes = [880, 1100, 1320];
+                    notes.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        const start = now + i * 0.06;
+                        const vol = volume * 0.18;
+                        gain.gain.setValueAtTime(vol, start);
+                        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.10);
+                        osc.start(start);
+                        osc.stop(start + 0.10);
+                    });
+                } catch (e) { /* ignore */ }
+            }
+
+            function playRevealSound() {
+                if (!soundEnabled) return;
+                initAudio();
+                if (!audioCtx) return;
+                try {
+                    const now = audioCtx.currentTime;
+                    const chord = [523, 659, 784, 1047];
+                    chord.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        const start = now + i * 0.07;
+                        const vol = volume * 0.20;
+                        gain.gain.setValueAtTime(vol, start);
+                        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.25);
+                        osc.start(start);
+                        osc.stop(start + 0.25);
+                    });
+                } catch (e) { /* ignore */ }
+            }
+
+            // ============================================================
+            //  音效开关 & 音量
+            // ============================================================
+            soundToggle.addEventListener('click', function() {
+                soundEnabled = !soundEnabled;
+                this.textContent = soundEnabled ? '🔊' : '🔇';
+                this.classList.toggle('muted', !soundEnabled);
+                if (soundEnabled) { initAudio();
+                    playStopSound(); }
+            });
+
+            volumeSlider.addEventListener('input', function() {
+                volume = parseInt(this.value, 10) / 100;
+                volumeValue.textContent = this.value;
+            });
+
+            // ============================================================
+            //  工具函数
+            // ============================================================
+            function getNames() {
+                return nameList.value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            }
+
+            function getContents() {
+                return contentList.value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            }
+
+            function getCount() {
+                let v = parseInt(countInput.value, 10);
+                if (isNaN(v) || v < 1) v = 1;
+                if (v > 10) v = 10;
+                countInput.value = v;
+                return v;
+            }
+
+            function getAvailableStudents() {
+                const all = getNames();
+                if (studentRepeatToggle.checked) return all;
+                const available = all.filter(s => !usedStudents.includes(s));
+                return available;
+            }
+
+            function getAvailableContents() {
+                const all = getContents();
+                if (contentRepeatToggle.checked) return all;
+                const available = all.filter(c => !usedContents.includes(c));
+                return available;
+            }
+
+            function pickRandom(arr) {
+                if (!arr || arr.length === 0) return '';
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            function getIntervalFromSpeed(val) {
+                const base = 380;
+                const factor = Math.pow(val / 10, 1.8);
+                return Math.max(10, Math.round(base * (1 - factor * 0.975)));
+            }
+
+            function shuffleArray(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            }
+
+            function pickUnique(arr, count) {
+                const shuffled = shuffleArray([...arr]);
+                return shuffled.slice(0, count);
+            }
+
+            function adjustNameSize(el, name) {
+                el.classList.toggle('long-name', name && name.length >= 4);
+            }
+
+            function adjustContentSize(el, content) {
+                const raw = content ? content.replace(/[《》（）]/g, '') : '';
+                el.classList.toggle('long-content', raw.length >= 8);
+            }
+
+            // ============================================================
+            //  速度提示
+            // ============================================================
+            function updateSpeedHint(val) {
+                const v = parseInt(val, 10);
+                if (v >= 9) {
+                    speedHint.textContent = '⚡ 闪电模式！快到飞起 ~';
+                    speedHint.classList.add('active');
+                } else if (v >= 7) {
+                    speedHint.textContent = '🚀 飞速滚动中！';
+                    speedHint.classList.add('active');
+                } else if (v >= 4) {
+                    speedHint.textContent = '🐇 适中速度，稳稳的 ~';
+                    speedHint.classList.remove('active');
+                } else {
+                    speedHint.textContent = '🐢 慢速浏览，从容不迫';
+                    speedHint.classList.remove('active');
+                }
+            }
+
+            // ============================================================
+            //  倒计时开关
+            // ============================================================
+            timerToggle.addEventListener('change', function() {
+                timerStatus.textContent = this.checked ? '开' : '关';
+                timerSeconds.disabled = !this.checked;
+                if (!this.checked) timerSeconds.value = 0;
+            });
+            timerSeconds.addEventListener('change', function() {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v) || v < 0) v = 0;
+                if (v > 20) v = 20;
+                this.value = v;
+            });
+
+            // ============================================================
+            //  速度滑块
+            // ============================================================
+            speedSlider.addEventListener('input', function() {
+                const val = parseInt(this.value, 10);
+                speedValue.textContent = val;
+                updateSpeedHint(val);
+                if (state === STATE.ROLLING) {
+                    stopRolling();
+                    startRolling();
+                }
+            });
+
+            // ============================================================
+            //  人数输入
+            // ============================================================
+            countInput.addEventListener('change', function() {
+                let v = parseInt(this.value, 10);
+                if (isNaN(v) || v < 1) v = 1;
+                if (v > 10) v = 10;
+                this.value = v;
+                if (state === STATE.IDLE) refreshDisplay();
+            });
+
+            // ============================================================
+            //  开关事件
+            // ============================================================
+            studentRepeatToggle.addEventListener('change', function() {
+                studentRepeatStatus.textContent = this.checked ? '是' : '否';
+                if (state === STATE.IDLE) {
+                    usedStudents = [];
+                    usedContents = [];
+                    refreshDisplay();
+                    updateStatus('✨ 已重置池子（去重状态变化）', '');
+                }
+            });
+
+            contentRepeatToggle.addEventListener('change', function() {
+                contentRepeatStatus.textContent = this.checked ? '是' : '否';
+                if (state === STATE.IDLE) {
+                    usedStudents = [];
+                    usedContents = [];
+                    refreshDisplay();
+                    updateStatus('✨ 已重置池子（去重状态变化）', '');
+                }
+            });
+
+            // ============================================================
+            //  重置池子按钮
+            // ============================================================
+            resetPoolBtn.addEventListener('click', function() {
+                resetPools();
+            });
+
+            function resetPools() {
+                usedStudents = [];
+                usedContents = [];
+                resetToIdle();
+                refreshDisplay();
+                updateStatus('✨ 池子已重置', '');
+                panelRight.classList.remove('is-done');
+                state = STATE.IDLE;
+                btnText.textContent = '开始抽选';
+                btnIcon.textContent = '🎲';
+                actionBtn.classList.remove('is-stopping');
+                actionBtn.disabled = false;
+            }
+
+            // ============================================================
+            //  更新状态标签
+            // ============================================================
+            function updateStatus(text, type) {
+                statusBadge.textContent = text;
+                statusBadge.className = 'status';
+                if (type === 'active') statusBadge.classList.add('active');
+                else if (type === 'done') statusBadge.classList.add('done');
+                else if (type === 'warning') statusBadge.classList.add('warning');
+            }
+
+            // ============================================================
+            //  网格模式
+            // ============================================================
+            function buildGridCards(names, count) {
+                gridContainer.innerHTML = '';
+                const list = names.length > 0 ? names : [];
+                const total = count || getCount() || 1;
+                for (let i = 0; i < total; i++) {
+                    const card = document.createElement('div');
+                    card.className = 'g-card';
+                    card.dataset.idx = i;
+                    const idx = document.createElement('div');
+                    idx.className = 'g-index';
+                    idx.textContent = `#${i + 1}`;
+                    card.appendChild(idx);
+                    const nameEl = document.createElement('div');
+                    nameEl.className = 'g-name';
+                    const name = list.length > 0 ? list[i % list.length] : '?';
+                    nameEl.textContent = name;
+                    if (name.length >= 4) nameEl.classList.add('long');
+                    card.appendChild(nameEl);
+                    gridContainer.appendChild(card);
+                }
+            }
+
+            function updateGridCards(names) {
+                const cards = gridContainer.querySelectorAll('.g-card');
+                cards.forEach((card, i) => {
+                    const nameEl = card.querySelector('.g-name');
+                    const name = names.length > 0 ? names[i % names.length] : '?';
+                    nameEl.textContent = name;
+                    nameEl.classList.toggle('long', name.length >= 4);
+                });
+            }
+
+            function revealGridCards(names) {
+                const cards = gridContainer.querySelectorAll('.g-card');
+                cards.forEach((card, i) => {
+                    const nameEl = card.querySelector('.g-name');
+                    const name = names.length > 0 ? names[i % names.length] : '?';
+                    nameEl.textContent = name;
+                    nameEl.classList.toggle('long', name.length >= 4);
+                    card.classList.remove('rolling');
+                    card.classList.add('revealed');
+                });
+            }
+
+            function resetGridCards() {
+                const cards = gridContainer.querySelectorAll('.g-card');
+                cards.forEach(c => c.classList.remove('revealed', 'rolling'));
+            }
+
+            // ============================================================
+            //  刷新展示
+            // ============================================================
+            function refreshDisplay() {
+                const count = getCount();
+                const students = getAvailableStudents();
+                const contents = getAvailableContents();
+
+                if (count === 1) {
+                    isGridMode = false;
+                    displayArea.classList.remove('grid-mode');
+                    gridContainer.innerHTML = '';
+                    nameDisplay.style.display = 'flex';
+                    contentDisplay.style.display = 'flex';
+                    if (students.length > 0) {
+                        nameDisplay.textContent = students[0];
+                        nameDisplay.className = 'name-box';
+                        adjustNameSize(nameDisplay, students[0]);
+                    } else {
+                        nameDisplay.textContent = '🌟 等待开始';
+                        nameDisplay.className = 'name-box placeholder';
+                    }
+                    if (contents.length > 0) {
+                        contentDisplay.textContent = contents[0];
+                        contentDisplay.className = 'content-box';
+                        adjustContentSize(contentDisplay, contents[0]);
+                    } else {
+                        contentDisplay.textContent = '📝 准备内容';
+                        contentDisplay.className = 'content-box placeholder';
+                    }
+                } else {
+                    isGridMode = true;
+                    displayArea.classList.add('grid-mode');
+                    nameDisplay.style.display = 'none';
+                    contentDisplay.style.display = 'none';
+                    const initNames = [];
+                    for (let i = 0; i < count; i++) {
+                        initNames.push(students.length > 0 ? students[i % students.length] : '?');
+                    }
+                    buildGridCards(initNames, count);
+                    resetGridCards();
+                }
+
+                if (state === STATE.IDLE) {
+                    const availStudents = getAvailableStudents();
+                    const availContents = getAvailableContents();
+                    if (count === 1) {
+                        if (availStudents.length === 0 && getNames().length > 0) {
+                            updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                        } else if (availContents.length === 0 && getContents().length > 0) {
+                            updateStatus('⚠️ 内容已全部抽完，请重置池子', 'warning');
+                        } else {
+                            updateStatus('✨ 准备就绪', '');
+                        }
+                    } else {
+                        if (availStudents.length === 0 && getNames().length > 0) {
+                            updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                        } else {
+                            updateStatus('✨ 准备就绪', '');
+                        }
+                    }
+                }
+            }
+
+            // ============================================================
+            //  重置UI（保留池子）
+            // ============================================================
+            function resetToIdle() {
+                stopRolling();
+                clearCountdown();
+                state = STATE.IDLE;
+                panelRight.classList.remove('is-rolling', 'is-done');
+                btnText.textContent = '开始抽选';
+                btnIcon.textContent = '🎲';
+                actionBtn.classList.remove('is-stopping');
+                actionBtn.disabled = false;
+                refreshDisplay();
+                const students = getAvailableStudents();
+                const contents = getAvailableContents();
+                const count = getCount();
+                if (count === 1) {
+                    if (students.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                    } else if (contents.length === 0 && getContents().length > 0) {
+                        updateStatus('⚠️ 内容已全部抽完，请重置池子', 'warning');
+                    } else {
+                        updateStatus('✨ 准备就绪', '');
+                    }
+                } else {
+                    if (students.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                    } else {
+                        updateStatus('✨ 准备就绪', '');
+                    }
+                }
+            }
+
+            // ============================================================
+            //  滚动逻辑
+            // ============================================================
+            function startRolling() {
+                if (timer) return;
+                const students = getAvailableStudents();
+                const contents = getAvailableContents();
+                const count = getCount();
+
+                if (count === 1) {
+                    if (students.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                        return;
+                    }
+                    if (contents.length === 0 && getContents().length > 0) {
+                        updateStatus('⚠️ 内容已全部抽完，请重置池子', 'warning');
+                        return;
+                    }
+                } else {
+                    if (students.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                        return;
+                    }
+                }
+                if (students.length === 0 && contents.length === 0) {
+                    updateStatus('⚠️ 请至少填写姓名或内容', 'warning');
+                    return;
+                }
+
+                panelRight.classList.remove('is-done');
+
+                if (count === 1) {
+                    isGridMode = false;
+                    displayArea.classList.remove('grid-mode');
+                    nameDisplay.style.display = 'flex';
+                    contentDisplay.style.display = 'flex';
+                    gridContainer.innerHTML = '';
+                    let name = students.length > 0 ? pickRandom(students) : '📌';
+                    let content = contents.length > 0 ? pickRandom(contents) : '📌';
+                    nameDisplay.textContent = name;
+                    adjustNameSize(nameDisplay, name);
+                    nameDisplay.className = 'name-box';
+                    contentDisplay.textContent = content;
+                    adjustContentSize(contentDisplay, content);
+                    contentDisplay.className = 'content-box';
+
+                    const interval = getIntervalFromSpeed(parseInt(speedSlider.value, 10));
+                    timer = setInterval(() => {
+                        const n = students.length > 0 ? pickRandom(students) : '📌';
+                        const c = contents.length > 0 ? pickRandom(contents) : '📌';
+                        nameDisplay.textContent = n;
+                        adjustNameSize(nameDisplay, n);
+                        contentDisplay.textContent = c;
+                        adjustContentSize(contentDisplay, c);
+                        playTick();
+                    }, interval);
+                } else {
+                    isGridMode = true;
+                    displayArea.classList.add('grid-mode');
+                    nameDisplay.style.display = 'none';
+                    contentDisplay.style.display = 'none';
+                    const initNames = [];
+                    for (let i = 0; i < count; i++) {
+                        initNames.push(students.length > 0 ? pickRandom(students) : '?');
+                    }
+                    buildGridCards(initNames, count);
+                    resetGridCards();
+                    const cards = gridContainer.querySelectorAll('.g-card');
+                    cards.forEach(c => c.classList.add('rolling'));
+
+                    const interval = getIntervalFromSpeed(parseInt(speedSlider.value, 10));
+                    timer = setInterval(() => {
+                        const newNames = [];
+                        for (let i = 0; i < count; i++) {
+                            newNames.push(students.length > 0 ? pickRandom(students) : '?');
+                        }
+                        updateGridCards(newNames);
+                        playTick();
+                    }, interval);
+                }
+
+                state = STATE.ROLLING;
+                panelRight.classList.add('is-rolling');
+                updateStatus('🌀 滚动中 ...', 'active');
+                btnText.textContent = '停止';
+                btnIcon.textContent = '⏹️';
+                actionBtn.classList.add('is-stopping');
+                actionBtn.disabled = false;
+                playStopSound();
+            }
+
+            function stopRolling() {
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                }
+                state = STATE.IDLE;
+                panelRight.classList.remove('is-rolling');
+            }
+
+            // ============================================================
+            //  选中当前
+            // ============================================================
+            function selectCurrent() {
+                stopRolling();
+                playStopSound();
+
+                const students = getAvailableStudents();
+                const contents = getAvailableContents();
+                const count = getCount();
+
+                if (count === 1) {
+                    const name = nameDisplay.textContent;
+                    const content = contentDisplay.textContent;
+                    if (name && name !== '🌟 等待开始' && name !== '📌') {
+                        nameDisplay.className = 'name-box selected';
+                        adjustNameSize(nameDisplay, name);
+                        if (!studentRepeatToggle.checked && getNames().includes(name)) {
+                            usedStudents.push(name);
+                        }
+                    }
+                    if (content && content !== '📝 准备内容' && content !== '📌') {
+                        contentDisplay.className = 'content-box selected';
+                        adjustContentSize(contentDisplay, content);
+                        if (!contentRepeatToggle.checked && getContents().includes(content)) {
+                            usedContents.push(content);
+                        }
+                    }
+                } else {
+                    if (students.length === 0) {
+                        updateStatus('⚠️ 请填写学生名单', 'warning');
+                        return;
+                    }
+                    const selected = pickUnique(students, Math.min(count, students.length));
+                    while (selected.length < count) {
+                        const extra = pickRandom(students);
+                        if (!selected.includes(extra)) selected.push(extra);
+                    }
+                    revealGridCards(selected);
+                    if (!studentRepeatToggle.checked) {
+                        selected.forEach(s => {
+                            if (getNames().includes(s) && !usedStudents.includes(s)) {
+                                usedStudents.push(s);
+                            }
+                        });
+                    }
+                }
+
+                playRevealSound();
+
+                panelRight.classList.add('is-done');
+                panelRight.classList.remove('is-rolling');
+                updateStatus('🎉 已揭晓！', 'done');
+                btnText.textContent = '再来一次';
+                btnIcon.textContent = '🔄';
+                actionBtn.classList.remove('is-stopping');
+                state = STATE.DONE;
+
+                const remainingStudents = getAvailableStudents();
+                const remainingContents = getAvailableContents();
+                if (count === 1) {
+                    if (remainingStudents.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 所有学生已抽完！请重置池子', 'warning');
+                    } else if (remainingContents.length === 0 && getContents().length > 0) {
+                        updateStatus('⚠️ 所有内容已抽完！请重置池子', 'warning');
+                    }
+                } else {
+                    if (remainingStudents.length === 0 && getNames().length > 0) {
+                        updateStatus('⚠️ 所有学生已抽完！请重置池子', 'warning');
+                    }
+                }
+            }
+
+            // ============================================================
+            //  倒计时
+            // ============================================================
+            function startCountdown() {
+                const seconds = parseInt(timerSeconds.value, 10);
+                if (seconds <= 0) {
+                    if (state === STATE.ROLLING) selectCurrent();
+                    return;
+                }
+                countdownValue = seconds;
+                actionBtn.disabled = true;
+                btnText.innerHTML =
+                    `⏳ <span class="countdown-badge" id="cdBadge">${countdownValue}</span>s`;
+                btnIcon.textContent = '⏳';
+
+                countdownTimer = setInterval(() => {
+                    countdownValue--;
+                    const badge = document.getElementById('cdBadge');
+                    if (badge) badge.textContent = countdownValue;
+                    playTick();
+                    if (countdownValue <= 0) {
+                        clearInterval(countdownTimer);
+                        countdownTimer = null;
+                        actionBtn.disabled = false;
+                        if (state === STATE.ROLLING) selectCurrent();
+                        btnText.textContent = '再来一次';
+                        btnIcon.textContent = '🔄';
+                        actionBtn.classList.remove('is-stopping');
+                    }
+                }, 1000);
+                updateStatus(`⏳ 倒计时 ${seconds}s`, 'active');
+            }
+
+            function clearCountdown() {
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                actionBtn.disabled = false;
+                const badge = document.getElementById('cdBadge');
+                if (badge) badge.remove();
+                if (state === STATE.ROLLING) {
+                    btnText.textContent = '停止';
+                    btnIcon.textContent = '⏹️';
+                } else {
+                    btnText.textContent = '开始抽选';
+                    btnIcon.textContent = '🎲';
+                }
+                actionBtn.classList.remove('is-stopping');
+            }
+
+            // ============================================================
+            //  主按钮
+            // ============================================================
+            function handleAction() {
+                if (countdownTimer) return;
+
+                if (state === STATE.DONE) {
+                    resetToIdle();
+                    const students = getAvailableStudents();
+                    const contents = getAvailableContents();
+                    const count = getCount();
+                    let empty = false;
+                    if (count === 1) {
+                        if ((students.length === 0 && getNames().length > 0) || (contents.length === 0 && getContents()
+                                .length > 0)) {
+                            empty = true;
+                        }
+                    } else {
+                        if (students.length === 0 && getNames().length > 0) {
+                            empty = true;
+                        }
+                    }
+                    if (empty) {
+                        updateStatus('⚠️ 池子已空，请重置池子', 'warning');
+                        btnText.textContent = '开始抽选';
+                        btnIcon.textContent = '🎲';
+                        actionBtn.classList.remove('is-stopping');
+                        return;
+                    }
+                    setTimeout(() => {
+                        if (state === STATE.IDLE) handleAction();
+                    }, 150);
+                    return;
+                }
+
+                if (state === STATE.ROLLING) {
+                    clearCountdown();
+                    selectCurrent();
+                    return;
+                }
+
+                if (state === STATE.IDLE) {
+                    const students = getAvailableStudents();
+                    const contents = getAvailableContents();
+                    const count = getCount();
+
+                    if (count === 1) {
+                        if (students.length === 0 && getNames().length > 0) {
+                            updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                            return;
+                        }
+                        if (contents.length === 0 && getContents().length > 0) {
+                            updateStatus('⚠️ 内容已全部抽完，请重置池子', 'warning');
+                            return;
+                        }
+                    } else {
+                        if (students.length === 0 && getNames().length > 0) {
+                            updateStatus('⚠️ 学生已全部抽完，请重置池子', 'warning');
+                            return;
+                        }
+                    }
+
+                    if (students.length === 0 && contents.length === 0) {
+                        updateStatus('⚠️ 请至少填写姓名或内容', 'warning');
+                        return;
+                    }
+                    if (count > 1 && students.length === 0) {
+                        updateStatus('⚠️ 多人模式需要填写学生名单', 'warning');
+                        return;
+                    }
+
+                    startRolling();
+
+                    if (timerToggle.checked) {
+                        const secs = parseInt(timerSeconds.value, 10);
+                        if (secs > 0) {
+                            startCountdown();
+                        } else {
+                            setTimeout(() => {
+                                if (state === STATE.ROLLING) selectCurrent();
+                            }, 100);
+                        }
+                    }
+                    return;
+                }
+            }
+
+            // ============================================================
+            //  重置所有（用于模板切换）
+            // ============================================================
+            function resetAll() {
+                stopRolling();
+                clearCountdown();
+                usedStudents = [];
+                usedContents = [];
+                resetToIdle();
+                panelRight.classList.remove('is-done');
+                state = STATE.IDLE;
+                btnText.textContent = '开始抽选';
+                btnIcon.textContent = '🎲';
+                actionBtn.classList.remove('is-stopping');
+                actionBtn.disabled = false;
+                updateStatus('✨ 已重置', '');
+            }
+
+            // ============================================================
+            //  ========== 历史记录功能 ==========
+            // ============================================================
+
+            const STORAGE_KEY = 'classroom_history_data';
+
+            function getHistoryData() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    if (!raw) return [];
+                    const data = JSON.parse(raw);
+                    return Array.isArray(data) ? data : [];
+                } catch (e) { return []; }
+            }
+
+            function saveHistoryData(data) {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                } catch (e) { console.warn('保存历史记录失败', e); }
+            }
+
+            function renderHistory() {
+                const data = getHistoryData();
+                historyList.innerHTML = '';
+                if (data.length === 0) {
+                    historyList.innerHTML = '<div class="history-empty">暂无历史记录，保存当前设置后在此显示</div>';
+                    historyCount.textContent = '0 条记录';
+                    return;
+                }
+                historyCount.textContent = data.length + ' 条记录';
+                // 从新到旧排序
+                const sorted = [...data].sort((a, b) => b.id - a.id);
+                sorted.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+
+                    const info = document.createElement('div');
+                    info.className = 'h-info';
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'h-name';
+                    nameSpan.textContent = item.name || '未命名';
+                    info.appendChild(nameSpan);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'h-meta';
+                    const studentCount = item.studentList ? item.studentList.split('\n').filter(s => s.trim()).length :
+                    0;
+                    const contentCount = item.contentList ? item.contentList.split('\n').filter(s => s.trim()).length :
+                    0;
+                    meta.innerHTML = `
+                        <span>👩‍🎓 ${studentCount}人</span>
+                        <span>📝 ${contentCount}项</span>
+                        <span>👥 ${item.count || 1}人/次</span>
+                        <span>⚡ ${item.speed || 5}</span>
+                        <span>⏳ ${item.timerEnabled ? (item.timerSeconds || 5) + 's' : '关'}</span>
+                    `;
+                    info.appendChild(meta);
+                    div.appendChild(info);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'h-actions';
+
+                    const loadBtn = document.createElement('button');
+                    loadBtn.className = 'btn-load';
+                    loadBtn.textContent = '加载';
+                    loadBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        loadHistoryItem(item.id);
+                    });
+                    actions.appendChild(loadBtn);
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-del';
+                    delBtn.textContent = '删除';
+                    delBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (confirm(`确定要删除「${item.name || '未命名'}」吗？`)) {
+                            deleteHistoryItem(item.id);
+                        }
+                    });
+                    actions.appendChild(delBtn);
+
+                    div.appendChild(actions);
+                    historyList.appendChild(div);
+                });
+            }
+
+            function loadHistoryItem(id) {
+                const data = getHistoryData();
+                const item = data.find(d => d.id === id);
+                if (!item) { alert('记录不存在'); return; }
+
+                // 如果当前正在滚动或完成状态，先重置
+                if (state !== STATE.IDLE) resetAll();
+
+                // 加载数据
+                nameList.value = item.studentList || '';
+                contentList.value = item.contentList || '';
+                studentRepeatToggle.checked = item.studentRepeat !== undefined ? item.studentRepeat : true;
+                studentRepeatStatus.textContent = studentRepeatToggle.checked ? '是' : '否';
+                contentRepeatToggle.checked = item.contentRepeat !== undefined ? item.contentRepeat : true;
+                contentRepeatStatus.textContent = contentRepeatToggle.checked ? '是' : '否';
+                countInput.value = item.count || 1;
+                speedSlider.value = item.speed || 5;
+                speedValue.textContent = speedSlider.value;
+                updateSpeedHint(speedSlider.value);
+                timerToggle.checked = item.timerEnabled !== undefined ? item.timerEnabled : true;
+                timerStatus.textContent = timerToggle.checked ? '开' : '关';
+                timerSeconds.value = item.timerSeconds || 5;
+                timerSeconds.disabled = !timerToggle.checked;
+
+                // 重置池子
+                usedStudents = [];
+                usedContents = [];
+                resetToIdle();
+                refreshDisplay();
+                updateStatus(`✅ 已加载「${item.name || '未命名'}」`, '');
+                // 更新模式标签
+                modeTag.innerHTML = `<span class="dot"></span> 📋 ${item.name || '已加载'}`;
+
+                // 触发输入事件更新展示
+                nameList.dispatchEvent(new Event('input'));
+                contentList.dispatchEvent(new Event('input'));
+
+                // 高亮加载的模板? 不强制高亮
+                templateCards.forEach(c => c.classList.remove('active', 'custom-active'));
+                // 如果加载的是自定义，高亮自定义
+                const customCard = document.querySelector('.t-card[data-template="custom"]');
+                if (customCard) customCard.classList.add('custom-active');
+
+                btnText.textContent = '开始抽选';
+                btnIcon.textContent = '🎲';
+                actionBtn.classList.remove('is-stopping');
+                state = STATE.IDLE;
+                panelRight.classList.remove('is-rolling', 'is-done');
+            }
+
+            function deleteHistoryItem(id) {
+                let data = getHistoryData();
+                data = data.filter(d => d.id !== id);
+                saveHistoryData(data);
+                renderHistory();
+            }
+
+            function saveCurrentAsHistory(name) {
+                const data = getHistoryData();
+                const newItem = {
+                    id: Date.now(),
+                    name: name.trim() || '未命名',
+                    studentList: nameList.value,
+                    contentList: contentList.value,
+                    studentRepeat: studentRepeatToggle.checked,
+                    contentRepeat: contentRepeatToggle.checked,
+                    count: parseInt(countInput.value, 10) || 1,
+                    speed: parseInt(speedSlider.value, 10) || 5,
+                    timerEnabled: timerToggle.checked,
+                    timerSeconds: parseInt(timerSeconds.value, 10) || 5,
+                };
+                data.push(newItem);
+                saveHistoryData(data);
+                renderHistory();
+                // 更新模式标签
+                modeTag.innerHTML = `<span class="dot"></span> 💾 ${newItem.name}`;
+                updateStatus(`💾 已保存「${newItem.name}」`, '');
+            }
+
+            // ============================================================
+            //  保存历史记录UI
+            // ============================================================
+            saveHistoryBtn.addEventListener('click', function() {
+                // 检查是否有内容可保存
+                const names = getNames();
+                const contents = getContents();
+                if (names.length === 0 && contents.length === 0) {
+                    alert('请至少填写学生名单或内容名单后再保存！');
+                    return;
+                }
+                historyNameInput.value = '';
+                saveModal.classList.remove('hidden');
+                setTimeout(() => historyNameInput.focus(), 100);
+            });
+
+            modalCancel.addEventListener('click', function() {
+                saveModal.classList.add('hidden');
+            });
+
+            modalConfirm.addEventListener('click', function() {
+                const name = historyNameInput.value.trim() || '未命名';
+                saveCurrentAsHistory(name);
+                saveModal.classList.add('hidden');
+            });
+
+            saveModal.addEventListener('click', function(e) {
+                if (e.target === this) saveModal.classList.add('hidden');
+            });
+
+            historyNameInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    modalConfirm.click();
+                }
+                if (e.key === 'Escape') {
+                    modalCancel.click();
+                }
+            });
+
+            // ============================================================
+            //  模板点击（修改：不自动填充历史记录，但保留原有功能）
+            // ============================================================
+            templateCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const template = this.dataset.template;
+                    if (state !== STATE.IDLE) resetAll();
+                    templateCards.forEach(c => {
+                        c.classList.remove('active', 'custom-active');
+                    });
+
+                    const sampleNames = ['甲1', '乙2', '丙3', '丁4', '戊5'];
+                    const sampleContents = [
+                        '《短歌行》', '《登高》', '《声声慢》',
+                        '《涉江采芙蓉》', '《虞美人》', '《登岳阳楼》',
+                        '《将进酒》', '《蜀道难》'
+                    ];
+
+                    switch (template) {
+                        case 'custom':
+                            this.classList.add('custom-active');
+                            modeTag.innerHTML = '<span class="dot"></span> 🎛️ 自行设置';
+                            countInput.disabled = false;
+                            countInput.style.opacity = '1';
+                            studentRepeatToggle.checked = true;
+                            studentRepeatStatus.textContent = '是';
+                            contentRepeatToggle.checked = true;
+                            contentRepeatStatus.textContent = '是';
+                            usedStudents = [];
+                            usedContents = [];
+                            resetToIdle();
+                            updateStatus('🎛️ 自行设置 · 自由调整', '');
+                            break;
+                        case 'five':
+                            this.classList.add('active');
+                            nameList.value = sampleNames.join('\n');
+                            contentList.value = '';
+                            speedSlider.value = 8;
+                            speedValue.textContent = '8';
+                            updateSpeedHint(8);
+                            timerToggle.checked = true;
+                            timerStatus.textContent = '开';
+                            timerSeconds.value = 5;
+                            timerSeconds.disabled = false;
+                            countInput.value = 5;
+                            countInput.disabled = true;
+                            countInput.style.opacity = '0.6';
+                            studentRepeatToggle.checked = true;
+                            studentRepeatStatus.textContent = '是';
+                            contentRepeatToggle.checked = true;
+                            contentRepeatStatus.textContent = '是';
+                            modeTag.innerHTML = '<span class="dot"></span> 👥 五人一组';
+                            usedStudents = [];
+                            usedContents = [];
+                            resetToIdle();
+                            updateStatus('👥 五人一组 · 速度8 · 倒计时5s', '');
+                            break;
+                        case 'countdown5':
+                            this.classList.add('active');
+                            nameList.value = sampleNames.join('\n');
+                            contentList.value = '';
+                            speedSlider.value = 8;
+                            speedValue.textContent = '8';
+                            updateSpeedHint(8);
+                            timerToggle.checked = true;
+                            timerStatus.textContent = '开';
+                            timerSeconds.value = 5;
+                            timerSeconds.disabled = false;
+                            countInput.value = 1;
+                            countInput.disabled = false;
+                            countInput.style.opacity = '1';
+                            studentRepeatToggle.checked = true;
+                            studentRepeatStatus.textContent = '是';
+                            contentRepeatToggle.checked = true;
+                            contentRepeatStatus.textContent = '是';
+                            modeTag.innerHTML = '<span class="dot"></span> ⏱️ 随机点名';
+                            usedStudents = [];
+                            usedContents = [];
+                            resetToIdle();
+                            updateStatus('⏱️ 随机点名 · 速度8 · 倒计时5s', '');
+                            break;
+                        case 'recite':
+                            this.classList.add('active');
+                            nameList.value = sampleNames.join('\n');
+                            contentList.value = sampleContents.join('\n');
+                            speedSlider.value = 8;
+                            speedValue.textContent = '8';
+                            updateSpeedHint(8);
+                            timerToggle.checked = true;
+                            timerStatus.textContent = '开';
+                            timerSeconds.value = 5;
+                            timerSeconds.disabled = false;
+                            countInput.value = 1;
+                            countInput.disabled = false;
+                            countInput.style.opacity = '1';
+                            studentRepeatToggle.checked = true;
+                            studentRepeatStatus.textContent = '是';
+                            contentRepeatToggle.checked = false;
+                            contentRepeatStatus.textContent = '否';
+                            modeTag.innerHTML = '<span class="dot"></span> 📖 抽背模式';
+                            usedStudents = [];
+                            usedContents = [];
+                            resetToIdle();
+                            updateStatus('📖 抽背模式 · 速度8 · 倒计时5s', '');
+                            break;
+                        case 'instant':
+                            this.classList.add('active');
+                            nameList.value = sampleNames.join('\n');
+                            contentList.value = '';
+                            speedSlider.value = 8;
+                            speedValue.textContent = '8';
+                            updateSpeedHint(8);
+                            timerToggle.checked = false;
+                            timerStatus.textContent = '关';
+                            timerSeconds.value = 0;
+                            timerSeconds.disabled = true;
+                            countInput.value = 1;
+                            countInput.disabled = false;
+                            countInput.style.opacity = '1';
+                            studentRepeatToggle.checked = true;
+                            studentRepeatStatus.textContent = '是';
+                            contentRepeatToggle.checked = true;
+                            contentRepeatStatus.textContent = '是';
+                            modeTag.innerHTML = '<span class="dot"></span> ⚡ 即点即停';
+                            usedStudents = [];
+                            usedContents = [];
+                            resetToIdle();
+                            updateStatus('⚡ 即点即停 · 速度8 · 无倒计时', '');
+                            break;
+                        default:
+                            break;
+                    }
+
+                    nameList.dispatchEvent(new Event('input'));
+                    contentList.dispatchEvent(new Event('input'));
+
+                    btnText.textContent = '开始抽选';
+                    btnIcon.textContent = '🎲';
+                    actionBtn.classList.remove('is-stopping');
+                    state = STATE.IDLE;
+                    panelRight.classList.remove('is-rolling', 'is-done');
+                });
+            });
+
+            // ============================================================
+            //  文本变化时刷新展示
+            // ============================================================
+            nameList.addEventListener('input', function() {
+                if (state === STATE.IDLE) refreshDisplay();
+            });
+
+            contentList.addEventListener('input', function() {
+                if (state === STATE.IDLE) refreshDisplay();
+            });
+
+            // ============================================================
+            //  键盘快捷键：空格
+            // ============================================================
+            document.addEventListener('keydown', function(e) {
+                if (e.code === 'Space' && !e.repeat) {
+                    const target = e.target;
+                    if (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT') return;
+                    if (saveModal.classList.contains('hidden') === false) return;
+                    e.preventDefault();
+                    if (actionBtn.disabled) return;
+                    handleAction();
+                }
+            });
+
+            // ============================================================
+            //  点击展示区也可触发
+            // ============================================================
+            panelRight.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-start')) return;
+                if (e.target.closest('.g-card')) return;
+                if (e.target.closest('.sound-btn')) return;
+                if (e.target.closest('.volume-slider')) return;
+                if (e.target.closest('.btn-reset-pool')) return;
+                if (e.target.closest('.history-item')) return;
+                if (e.target.closest('.btn-save-history')) return;
+                if (actionBtn.disabled) return;
+                handleAction();
+            });
+
+            // ============================================================
+            //  初始化
+            // ============================================================
+            function init() {
+                // 先渲染历史记录
+                renderHistory();
+
+                // 默认激活自行设置
+                const defaultTemplate = document.querySelector('.t-card[data-template="custom"]');
+                if (defaultTemplate) {
+                    defaultTemplate.click();
+                } else {
+                    modeTag.innerHTML = '<span class="dot"></span> 🎛️ 自行设置';
+                    countInput.disabled = false;
+                    countInput.style.opacity = '1';
+                    usedStudents = [];
+                    usedContents = [];
+                    resetToIdle();
+                    updateStatus('✨ 准备就绪', '');
+                }
+                speedValue.textContent = speedSlider.value;
+                updateSpeedHint(speedSlider.value);
+                timerStatus.textContent = timerToggle.checked ? '开' : '关';
+                timerSeconds.disabled = !timerToggle.checked;
+                btnText.textContent = '开始抽选';
+                btnIcon.textContent = '🎲';
+                actionBtn.classList.remove('is-stopping');
+                state = STATE.IDLE;
+                soundToggle.textContent = '🔊';
+                soundToggle.classList.remove('muted');
+                volumeSlider.value = 60;
+                volumeValue.textContent = '60';
+                volume = 0.6;
+
+                console.log('🌸 课堂互动 · 随机抽选 已启动！');
+                console.log('👩‍🎓 学生 ' + getNames().length + ' 人 · 📝 内容 ' + getContents().length + ' 项');
+                console.log('📋 历史记录 ' + getHistoryData().length + ' 条');
+            }
+
+            // ============================================================
+            //  暴露全局
+            // ============================================================
+            window.__app = {
+                reset: resetAll,
+                start: handleAction,
+                getNames: getNames,
+                getContents: getContents,
+                getCount: getCount,
+                resetPools: resetPools,
+                saveHistory: saveCurrentAsHistory,
+                loadHistory: loadHistoryItem,
+                getHistory: getHistoryData,
+            };
+
+            // ============================================================
+            //  按钮绑定
+            // ============================================================
+            actionBtn.addEventListener('click', handleAction);
+
+            // ============================================================
+            //  启动
+            // ============================================================
+            init();
+
+        })();
+    </script>
+
+</body>
+</html>
